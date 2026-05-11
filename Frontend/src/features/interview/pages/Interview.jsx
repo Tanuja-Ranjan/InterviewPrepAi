@@ -64,6 +64,19 @@ const NAV_ITEMS = [
   },
 ];
 
+// ── Helper ────────────────────────────────────────────────────────────────────
+const getMatchLabel = (score) => {
+  if (score >= 80)
+    return { text: "Strong match for this role", color: "#22c55e" };
+  if (score >= 60)
+    return { text: "Good match for this role", color: "#3b82f6" };
+  if (score >= 40)
+    return { text: "Partial match for this role", color: "#eab308" };
+  if (score >= 20)
+    return { text: "Weak match for this role", color: "#f97316" };
+  return { text: "Poor match for this role", color: "#ef4444" };
+};
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 const QuestionCard = ({ item, index }) => {
   const [open, setOpen] = useState(false);
@@ -153,6 +166,8 @@ const Interview = () => {
       : report.matchScore >= 60
         ? "score--mid"
         : "score--low";
+
+  const matchLabel = getMatchLabel(report.matchScore);
 
   return (
     <div className="interview-page">
@@ -255,7 +270,9 @@ const Interview = () => {
               <span className="match-score__value">{report.matchScore}</span>
               <span className="match-score__pct">%</span>
             </div>
-            <p className="match-score__sub">Strong match for this role</p>
+            <p className="match-score__sub" style={{ color: matchLabel.color }}>
+              {matchLabel.text}
+            </p>
           </div>
 
           <div className="sidebar-divider" />
