@@ -2,6 +2,9 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import Login from "./features/auth/pages/Login";
 import Register from "./features/auth/pages/Register";
 import Protected from "./features/auth/components/Protected";
+import Home from "./features/interview/pages/Home";
+import Interview from "./features/interview/pages/Interview";
+
 export const router = createBrowserRouter([
   {
     path: "/login",
@@ -15,25 +18,12 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <Protected>
-        <h1
-          style={{
-            color: "white",
-            fontSize: "50px",
-            backgroundColor: "red",
-            width: "100vw",
-            height: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            zIndex: 99999,
-          }}
-        >
-          Home Page
-        </h1>
+        <Home />
       </Protected>
     ),
   },
+  {
+    path: "/interview/:interviewId",
+    element:<Protected><Interview /></Protected>
+  }
 ]);

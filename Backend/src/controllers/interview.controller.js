@@ -2,6 +2,10 @@ const pdfParse = require("pdf-parse");
 const { generateInterviewReport } = require("../services/ai.service");
 const interviewReportModel = require("../models/interviewReportModel");
 
+/**
+ * @description Generate interview report based on resume, self description and job description
+ */
+
 async function generateInterviewReportController(req, res) {
   try {
     if (!req.file) {
@@ -47,4 +51,40 @@ async function generateInterviewReportController(req, res) {
 }
 
 
-module.exports = { generateInterviewReportController };
+/**
+ * @description Get interview report by interviewId
+ */
+async function getInterviewReportByIdController(req, res) { 
+  const { InterviewId } = req.params
+  
+  const interviewReport = await interviewReportModel.findOne({ _id: InterviewId, user: req.user.id })
+  
+  if (!interviewReport) {
+    return res.status(404).json({ message: "Interview report not found" });
+  }
+  res.status(200).json({
+    message: "Interview report fetched successfully",
+    interviewReport
+  });
+
+}
+
+
+/**
+ * @description Get all interview reports for the logged in user
+ */
+async function getAllInterviewReportsController(req, res) { 
+  const interviewReports = await interviewReportModel.find({ user: req.user.id }).sort({ createdAt: -1 }).select("-resume -selfDescription -jobDescription -_v -technicalQuestions -behavioralQuestions -skillGaps -preparationPlan");
+
+  res.status(200).json({
+    message: "Interview reports fetched successfully",
+    interviewReports
+  });
+
+}
+
+module.exports = {
+  generateInterviewReportController,
+  getInterviewReportByIdController,
+  getAllInterviewReportsController,
+};
