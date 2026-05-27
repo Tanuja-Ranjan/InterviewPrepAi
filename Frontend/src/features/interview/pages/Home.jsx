@@ -3,7 +3,10 @@ import "../style/home.scss";
 import { useInterview } from "../hooks/useInterview.js";
 import { useNavigate } from "react-router-dom";
 
+
 const Home = () => {
+  const [isGenerating, setIsGenerating] = useState(false);
+
   const { loading, generateReport, reports } = useInterview();
   const [jobDescription, setJobDescription] = useState("");
   const [selfDescription, setSelfDescription] = useState("");
@@ -13,21 +16,22 @@ const Home = () => {
 
   const handleGenerateReport = async () => {
     const resumeFile = resumeInputRef.current.files[0];
-    const data = await generateReport({
-      jobDescription,
-      selfDescription,
-      resumeFile,
-    });
-    navigate(`/interview/${data._id}`);
+    setIsGenerating(true);
+    try {
+      const data = await generateReport({
+        jobDescription,
+        selfDescription,
+        resumeFile,
+      });
+      navigate(`/interview/${data._id}`);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsGenerating(false);
+    }
+   
   };
 
-  if (loading) {
-    return (
-      <main className="loading-screen">
-        <h1>Loading your interview plan...</h1>
-      </main>
-    );
-  }
 
   return (
     <div className="home-page">
@@ -206,17 +210,30 @@ const Home = () => {
           <span className="footer-info">
             AI-Powered Strategy Generation &bull; Approx 30s
           </span>
-          <button onClick={handleGenerateReport} className="generate-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
-            </svg>
-            Generate My Interview Strategy
+          <button
+            onClick={handleGenerateReport}
+            className="generate-btn"
+            disabled={isGenerating}
+          >
+            {isGenerating ? (
+              <>
+                <span className="spinner" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+                </svg>
+                Generate My Interview Strategy
+              </>
+            )}
           </button>
         </div>
       </div>

@@ -23,12 +23,11 @@ export const useAuth = () => {
     try {
       const data = await register({ username, email, password })
       setUser(data.user)
-    } catch {
+    } catch (err) {
+      throw err
     } finally {
-          setLoading(false);
-
-    }
-    
+      setLoading(false);
+    }  
   }
 
   const handleLogout = async () => {
