@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import "../style/home.scss";
 import { useInterview } from "../hooks/useInterview.js";
 import { useNavigate } from "react-router-dom";
-
+import Navbar from "../../auth/components/Navbar";  // ✅ sahi
 
 const Home = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -35,6 +35,7 @@ const Home = () => {
 
   return (
     <div className="home-page">
+      <Navbar />
       {/* Page Header */}
       <header className="page-header">
         <h1>

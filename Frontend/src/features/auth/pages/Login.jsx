@@ -1,30 +1,21 @@
-import React,{useState} from "react";
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "../auth.form.scss";
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
+  const { authLoading, handleLogin } = useAuth();
+  const navigate = useNavigate();
 
-  const { loading, handleLogin } = useAuth()
-  const navigate = useNavigate()
-  
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    handleLogin({ email, password })
-    navigate('/')
-  }
-
-  if (loading) {
-    return (
-      <main>
-        <h1>Loading......</h1>
-      </main>
-    );
-  }
+    e.preventDefault();
+    await handleLogin({ email, password }); // ← await add kiya
+    navigate("/");
+  };
 
   return (
     <main>
@@ -34,7 +25,7 @@ const Login = () => {
           <div className="input-group">
             <label htmlFor="email">Email</label>
             <input
-              onChange={(e) => {setEmail(e.target.value)}}
+              onChange={(e) => setEmail(e.target.value)}
               type="email"
               id="email"
               name="email"
@@ -44,19 +35,24 @@ const Login = () => {
           <div className="input-group">
             <label htmlFor="password">Password</label>
             <input
-              onChange={(e) => {setPassword(e.target.value)}}
+              onChange={(e) => setPassword(e.target.value)}
               type="password"
               id="password"
               name="password"
               placeholder="Enter password"
             />
           </div>
-          <button className="button primary-button" type="submit">
-            Login
+          <button
+            className="button primary-button"
+            type="submit"
+            disabled={authLoading}
+          >
+            {authLoading ? "Logging in..." : "Login"}
           </button>
         </form>
-
-        <p>Don't have an account? <Link to = {"/register"}>Register</Link></p>
+        <p>
+          Don't have an account? <Link to="/register">Register</Link>
+        </p>
       </div>
     </main>
   );

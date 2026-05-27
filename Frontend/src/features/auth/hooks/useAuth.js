@@ -5,7 +5,8 @@ import { login, register, logout, getMe } from "../services/auth.api";
 export const useAuth = () => {
 
   const context = useContext(AuthContext)
-  const { user, setUser, loading, setLoading } = context
+  const { user, setUser, loading, setLoading, authLoading, setAuthLoading } =
+    context;
   
   const handleLogin = async ({ email, password }) => {
     setLoading(true)
@@ -31,17 +32,13 @@ export const useAuth = () => {
   }
 
   const handleLogout = async () => {
-    setLoading(true);
     try {
-      const data = await logout();
-      setUser(null)
+      await logout();
+      setUser(null); // ← bas itna kaafi hai
     } catch {
-      
-    } finally {
-      setLoading(false);
+      setUser(null); // ← error aaye tab bhi logout kar do
     }
-   
-  }
+  };
 
     useEffect(() => {
       const getAndSetUser = async () => {
@@ -56,5 +53,11 @@ export const useAuth = () => {
       getAndSetUser()
     }, [])
   
-  return {user, loading, handleRegister, handleLogin, handleLogout}
+  return {
+    user,
+    loading,
+    authLoading, handleRegister,
+    handleLogin,
+    handleLogout,
+  };
 }
