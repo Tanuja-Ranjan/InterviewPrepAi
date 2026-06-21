@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../style/interview.scss";
 import { useInterview } from "../hooks/useInterview.js";
 import { useNavigate, useParams } from "react-router";
-import Navbar from "../../auth/components/Navbar";  // ✅ sahi
+
 const NAV_ITEMS = [
   {
     id: "technical",
@@ -171,7 +171,6 @@ const Interview = () => {
 
   return (
     <div className="interview-page">
-      <Navbar />
       <div className="interview-layout">
         {/* ── Left Nav ── */}
         <nav className="interview-nav">

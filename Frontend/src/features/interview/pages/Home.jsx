@@ -7,15 +7,38 @@ import Navbar from "../../auth/components/Navbar";  // ✅ sahi
 const Home = () => {
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const { loading, generateReport, reports } = useInterview();
+  const { loading, generateReport, reports, deleteReport } = useInterview();
   const [jobDescription, setJobDescription] = useState("");
   const [selfDescription, setSelfDescription] = useState("");
+  const [error, setError] = useState(""); 
   const resumeInputRef = useRef();
 
   const navigate = useNavigate();
 
   const handleGenerateReport = async () => {
     const resumeFile = resumeInputRef.current.files[0];
+    // ✅ VALIDATION START
+    setError("");
+
+    if (!resumeFile) {
+      setError("Please upload your resume (PDF).");
+      return;
+    }
+
+    if (jobDescription.trim().length < 50) {
+      setError(
+        "Please provide a detailed job description (at least 50 characters).",
+      );
+      return;
+    }
+
+    if (selfDescription.trim().length < 50) {
+      setError(
+        "Please provide a detailed self-description (at least 50 characters).",
+      );
+      return;
+    }
+    // ✅ END VALIDATION
     setIsGenerating(true);
     try {
       const data = await generateReport({
@@ -26,13 +49,22 @@ const Home = () => {
       navigate(`/interview/${data._id}`);
     } catch (err) {
       console.error(err);
+      setError(
+        err?.response?.data?.message ||
+          "Something went wrong. Please try again.",
+      );
     } finally {
       setIsGenerating(false);
     }
-   
+  };;
+
+  const handleDelete = async (e, reportId) => {
+    e.stopPropagation(); // ✅ card click navigate na ho jaaye
+    if (window.confirm("Delete this interview report?")) {
+      await deleteReport(reportId);
+    }
   };
-
-
+  
   return (
     <div className="home-page">
       <Navbar />
@@ -206,6 +238,13 @@ const Home = () => {
           </div>
         </div>
 
+        {/* ✅ Error box — Card Footer se pehle add karo */}
+        {error && (
+          <div className="error-box">
+            <p>{error}</p>
+          </div>
+        )}
+        
         {/* Card Footer */}
         <div className="interview-card__footer">
           <span className="footer-info">
@@ -259,6 +298,14 @@ const Home = () => {
                 >
                   Match Score: {report.matchScore}%
                 </p>
+                {/* ✅ Delete button */}
+                <button
+                  className="delete-btn"
+                  onClick={(e) => handleDelete(e, report._id)}
+                  title="Delete this report"
+                >
+                  🗑️
+                </button>
               </li>
             ))}
           </ul>

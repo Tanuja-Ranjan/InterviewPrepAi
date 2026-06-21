@@ -8,7 +8,7 @@ async function connectToDB() {
   }
   catch (err) {
     console.log(err);
-    
+
   }
 }
 
